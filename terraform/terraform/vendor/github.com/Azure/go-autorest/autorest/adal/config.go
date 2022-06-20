@@ -18,6 +18,7 @@ import (
 	"errors"
 	"fmt"
 	"net/url"
+	"strings"
 )
 
 const (
@@ -77,7 +78,14 @@ func NewOAuthConfigWithAPIVersion(activeDirectoryEndpoint, tenantID string, apiV
 	if err != nil {
 		return nil, err
 	}
-	tokenURL, err := u.Parse(fmt.Sprintf(activeDirectoryEndpointTemplate, tenantID, "token", api))
+	subpath := ""
+	if strings.HasSuffix(activeDirectoryEndpoint,"/adfs") {
+	   subpath = "adfs"
+	}  else {
+	   subpath = tenantID
+	}
+	tokenURL, err := u.Parse(fmt.Sprintf(activeDirectoryEndpointTemplate, subpath, "token", api))
+	// tokenURL, err := u.Parse(fmt.Sprintf(activeDirectoryEndpointTemplate, tenantID, "token", api))
 	if err != nil {
 		return nil, err
 	}
